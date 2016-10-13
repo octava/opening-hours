@@ -4,6 +4,11 @@ namespace Spatie\OpeningHours\Helpers;
 
 class Arr
 {
+    /**
+     * @param array    $array
+     * @param callable $callback
+     * @return array
+     */
     public static function map(array $array, callable $callback)
     {
         $keys = array_keys($array);
@@ -13,21 +18,35 @@ class Arr
         return array_combine($keys, $items);
     }
 
+    /**
+     * @param      $array
+     * @param      $key
+     * @param null $default
+     * @return null
+     */
     public static function pull(&$array, $key, $default = null)
     {
-        $value = $array[$key] ?? $default;
+        $value = isset($array[$key]) ? $array[$key] : $default;
 
         unset($array[$key]);
 
         return $value;
     }
 
+    /**
+     * @param array $array
+     * @return array
+     */
     public static function mirror(array $array)
     {
         return array_combine($array, $array);
     }
 
-    public static function createUniquePairs(array $array): array
+    /**
+     * @param array $array
+     * @return array
+     */
+    public static function createUniquePairs(array $array)
     {
         $pairs = [];
 

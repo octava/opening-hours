@@ -1,7 +1,8 @@
 {
-    "name": "spatie/opening-hours",
-    "description": "A helper to query and format a set of opening hours",
+    "name": "octava/opening-hours",
+    "description": "A helper to query and format a set of opening hours, clone of spatie/opening-hours",
     "keywords": [
+        "octava",
         "spatie",
         "opening-hours",
         "schedule",
@@ -19,7 +20,7 @@
         }
     ],
     "require": {
-        "php": "^7.0"
+        "php": ">=5.5.9"
     },
     "require-dev": {
         "phpunit/phpunit": "5.*"

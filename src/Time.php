@@ -10,17 +10,30 @@ class Time
 {
     /** @var int */
     protected $hours;
+    /**
+     * @var int
+     */
     protected $minutes;
 
-    protected function __construct(int $hours, int $minutes)
+    /**
+     * Time constructor.
+     * @param int $hours
+     * @param int $minutes
+     */
+    protected function __construct($hours, $minutes)
     {
         $this->hours = $hours;
         $this->minutes = $minutes;
     }
 
-    public static function fromString(string $string): self
+    /**
+     * @param string $string
+     * @return Time
+     * @throws InvalidTimeString
+     */
+    public static function fromString($string)
     {
-        if (! preg_match('/^([0-1][0-9])|(2[0-4]):[0-5][0-9]$/', $string)) {
+        if (!preg_match('/^([0-1][0-9])|(2[0-4]):[0-5][0-9]$/', $string)) {
             throw InvalidTimeString::forString($string);
         }
 
@@ -29,17 +42,29 @@ class Time
         return new self($hours, $minutes);
     }
 
-    public static function fromDateTime(DateTimeInterface $dateTime): self
+    /**
+     * @param DateTimeInterface $dateTime
+     * @return Time
+     */
+    public static function fromDateTime(DateTimeInterface $dateTime)
     {
         return self::fromString($dateTime->format('H:i'));
     }
 
-    public function isSame(Time $time): bool
+    /**
+     * @param Time $time
+     * @return bool
+     */
+    public function isSame(Time $time)
     {
-        return (string) $this === (string) $time;
+        return (string)$this === (string)$time;
     }
 
-    public function isAfter(Time $time): bool
+    /**
+     * @param Time $time
+     * @return bool
+     */
+    public function isAfter(Time $time)
     {
         if ($this->isSame($time)) {
             return false;
@@ -52,26 +77,40 @@ class Time
         return $this->hours === $time->hours && $this->minutes >= $time->minutes;
     }
 
-    public function isBefore(Time $time): bool
+    /**
+     * @param Time $time
+     * @return bool
+     */
+    public function isBefore(Time $time)
     {
         if ($this->isSame($time)) {
             return false;
         }
 
-        return ! $this->isAfter($time);
+        return !$this->isAfter($time);
     }
 
-    public function isSameOrAfter(Time $time): bool
+    /**
+     * @param Time $time
+     * @return bool
+     */
+    public function isSameOrAfter(Time $time)
     {
         return $this->isSame($time) || $this->isAfter($time);
     }
 
-    public function toDateTime(): DateTime
+    /**
+     * @return DateTime
+     */
+    public function toDateTime()
     {
         return new DateTime("1970-01-01 {$this}:00");
     }
 
-    public function __toString(): string
+    /**
+     * @return string
+     */
+    public function __toString()
     {
         return str_pad($this->hours, 2, '0', STR_PAD_LEFT).':'.str_pad($this->minutes, 2, '0', STR_PAD_LEFT);
     }

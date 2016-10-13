@@ -15,7 +15,10 @@ class Day
     const SATURDAY = 'saturday';
     const SUNDAY = 'sunday';
 
-    public static function days(): array
+    /**
+     * @return array
+     */
+    public static function days()
     {
         return [
             static::MONDAY,
@@ -28,17 +31,29 @@ class Day
         ];
     }
 
-    public static function mapDays(callable $callback): array
+    /**
+     * @param callable $callback
+     * @return array
+     */
+    public static function mapDays(callable $callback)
     {
         return Arr::map(Arr::mirror(static::days()), $callback);
     }
 
-    public static function isValid(string $day): bool
+    /**
+     * @param string $day
+     * @return bool
+     */
+    public static function isValid($day)
     {
         return in_array($day, static::days());
     }
 
-    public static function onDateTime(DateTimeInterface $dateTime): string
+    /**
+     * @param DateTimeInterface $dateTime
+     * @return string
+     */
+    public static function onDateTime(DateTimeInterface $dateTime)
     {
         return static::days()[$dateTime->format('N') - 1];
     }

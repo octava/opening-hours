@@ -14,13 +14,20 @@ class OpeningHoursForDay implements ArrayAccess, Countable, IteratorAggregate
     /** @var array */
     protected $openingHours = [];
 
+    /**
+     * @param array $strings
+     * @return static
+     */
     public static function fromStrings(array $strings)
     {
         $openingHoursForDay = new static();
 
-        $timeRanges = Arr::map($strings, function ($string) {
-            return TimeRange::fromString($string);
-        });
+        $timeRanges = Arr::map(
+            $strings,
+            function ($string) {
+                return TimeRange::fromString($string);
+            }
+        );
 
         $openingHoursForDay->guardAgainstTimeRangeOverlaps($timeRanges);
 
@@ -29,6 +36,10 @@ class OpeningHoursForDay implements ArrayAccess, Countable, IteratorAggregate
         return $openingHoursForDay;
     }
 
+    /**
+     * @param Time $time
+     * @return bool
+     */
     public function isOpenAt(Time $time)
     {
         foreach ($this->openingHours as $timeRange) {
@@ -40,36 +51,62 @@ class OpeningHoursForDay implements ArrayAccess, Countable, IteratorAggregate
         return false;
     }
 
-    public function offsetExists($offset): bool
+    /**
+     * @param mixed $offset
+     * @return bool
+     */
+    public function offsetExists($offset)
     {
         return isset($this->openingHours[$offset]);
     }
 
+    /**
+     * @param mixed $offset
+     * @return mixed
+     */
     public function offsetGet($offset)
     {
         return $this->openingHours[$offset];
     }
 
+    /**
+     * @param mixed $offset
+     * @param mixed $value
+     * @throws \Exception
+     */
     public function offsetSet($offset, $value)
     {
         throw new \Exception();
     }
 
+    /**
+     * @param mixed $offset
+     */
     public function offsetUnset($offset)
     {
         unset($this->openingHours[$offset]);
     }
 
-    public function count(): int
+    /**
+     * @return int
+     */
+    public function count()
     {
         return count($this->openingHours);
     }
 
+    /**
+     * @return ArrayIterator
+     */
     public function getIterator()
     {
         return new ArrayIterator($this->openingHours);
     }
 
+    /**
+     * @param array $openingHours
+     * @throws OverlappingTimeRanges
+     */
     protected function guardAgainstTimeRangeOverlaps(array $openingHours)
     {
         foreach (Arr::createUniquePairs($openingHours) as $timeRanges) {
