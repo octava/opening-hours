@@ -4,6 +4,7 @@ namespace Spatie\OpeningHours;
 
 use DateTime;
 use DateTimeInterface;
+use DateTimeZone;
 use Spatie\OpeningHours\Exceptions\Exception;
 use Spatie\OpeningHours\Exceptions\InvalidDate;
 use Spatie\OpeningHours\Exceptions\InvalidDayName;
@@ -17,11 +18,17 @@ class OpeningHours
     /** @var array */
     protected $exceptions = [];
 
+    /** @var DateTimeZone|null */
+    protected $timezone;
+
     /**
      * OpeningHours constructor.
+     * @param null $timezone
      */
-    public function __construct()
+    public function __construct($timezone = null)
     {
+        $this->timezone = $timezone ? new DateTimeZone($timezone) : null;
+
         $this->openingHours = Day::mapDays(
             function () {
                 return new OpeningHoursForDay();
@@ -32,7 +39,7 @@ class OpeningHours
     /**
      * @param array $data
      *
-     * @return static
+     * @return OpeningHours
      */
     public static function create(array $data)
     {
@@ -97,6 +104,8 @@ class OpeningHours
      */
     public function forDate(DateTimeInterface $date)
     {
+        $date = $this->setTimezone($date);
+
         return isset($this->exceptions[$date->format('Y-m-d')])
             ? $this->exceptions[$date->format('Y-m-d')] : $this->forDay(Day::onDateTime($date));
     }
@@ -133,6 +142,8 @@ class OpeningHours
      */
     public function isOpenAt(DateTimeInterface $dateTime)
     {
+        $dateTime = $this->setTimezone($dateTime);
+
         $openingHoursForDay = $this->forDate($dateTime);
 
         return $openingHoursForDay->isOpenAt(Time::fromDateTime($dateTime));
@@ -144,6 +155,8 @@ class OpeningHours
      */
     public function isClosedAt(DateTimeInterface $dateTime)
     {
+        $dateTime = $this->setTimezone($dateTime);
+
         return !$this->isOpenAt($dateTime);
     }
 
@@ -223,5 +236,14 @@ class OpeningHours
         }
 
         return $day;
+    }
+
+    protected function setTimezone(DateTimeInterface $date)
+    {
+        if ($this->timezone) {
+            $date->setTimezone($this->timezone);
+        }
+
+        return $date;
     }
 }
